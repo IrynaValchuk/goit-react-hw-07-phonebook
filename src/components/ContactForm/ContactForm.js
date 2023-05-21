@@ -1,36 +1,36 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact, getContacts } from 'redux/contactsSlice';
+import { addContact } from 'redux/operations';
+import { selectContacts, selectError } from 'redux/selectors';
 
 import css from 'components/ContactForm/ContactForm.module.css';
 
 export const ContactForm = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(getContacts);
+  const contacts = useSelector(selectContacts);
+  const error = useSelector(selectError);
 
   const handleSubmitForm = evt => {
     evt.preventDefault();
     const form = evt.target;
-    const contactName = form.elements.name.value;
-    const contactNumber = form.elements.number.value;
+    const name = form.elements.name.value;
+    const phone = form.elements.number.value;
 
     const isContact = contacts.find(
-      contact => contact.name.toLowerCase() === contactName.toLowerCase()
+      contact => contact.name.toLowerCase() === name.toLowerCase()
     );
 
-    const isNumber = contacts.find(
-      contact => contact.number.toLowerCase() === contactNumber.toLowerCase()
-    );
+    const isNumber = contacts.find(contact => contact.phone === phone);
 
     if (isContact) {
-      alert(`${contactName} is already in contacts`);
+      alert(`${name} is already in contacts`);
       form.reset();
       return;
     } else if (isNumber) {
-      alert(`Number ${contactNumber} is already in contacts`);
+      alert(`Number ${phone} is already in contacts`);
       form.reset();
       return;
     } else {
-      dispatch(addContact(contactName, contactNumber));
+      dispatch(addContact({ name, phone }));
       form.reset();
     }
   };
@@ -61,7 +61,7 @@ export const ContactForm = () => {
           className={css.input}
         />
       </label>
-      <button type="submit" className={css.btn}>
+      <button type="submit" className={css.btn} disabled={error}>
         Add contact
       </button>
     </form>

@@ -1,35 +1,30 @@
-import { createSlice, nanoid } from '@reduxjs/toolkit';
-
-const contactsInitialState = { value: [] };
+import { createSlice, isAnyOf } from '@reduxjs/toolkit';
+import { addContact, deleteContact, fetchContacts } from './operations';
+import { contactsInitialState } from './initialState';
+import { STATUS } from 'constants';
+import {
+  handleFulfilled,
+  handleFulfilledAdd,
+  handleFulfilledDelete,
+  handleFulfilledGet,
+  handlePending,
+  handleRejected,
+  operationSelectionFn,
+} from 'services';
 
 const contactsSlice = createSlice({
   name: 'contacts',
   initialState: contactsInitialState,
-  reducers: {
-    addContact: {
-      reducer(state, action) {
-        state.value.unshift(action.payload);
-      },
-      prepare(name, number) {
-        return {
-          payload: {
-            id: nanoid(),
-            name,
-            number,
-          },
-        };
-      },
-    },
-    deleteContact(state, action) {
-      const index = state.value.findIndex(
-        contact => contact.id === action.payload
-      );
-      state.value.splice(index, 1);
-    },
+  extraReducers: builder => {
+    const { PENDING, FULFILLED, REJECTED } = STATUS;
+    builder
+      .addCase(fetchContacts.fulfilled, handleFulfilledGet)
+      .addCase(addContact.fulfilled, handleFulfilledAdd)
+      .addCase(deleteContact.fulfilled, handleFulfilledDelete)
+      .addMatcher(isAnyOf(...operationSelectionFn(PENDING)), handlePending)
+      .addMatcher(isAnyOf(...operationSelectionFn(FULFILLED)), handleFulfilled)
+      .addMatcher(isAnyOf(...operationSelectionFn(REJECTED)), handleRejected);
   },
 });
 
-export const getContacts = state => state.contacts.value;
-export const { addContact, deleteContact } = contactsSlice.actions;
 export const contactsReducer = contactsSlice.reducer;
-
