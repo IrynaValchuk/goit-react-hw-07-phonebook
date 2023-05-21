@@ -10,7 +10,7 @@ import {
   handlePending,
   handleRejected,
   operationSelectionFn,
-} from 'services';
+} from 'helpers';
 
 const contactsSlice = createSlice({
   name: 'contacts',

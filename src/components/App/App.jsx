@@ -1,9 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
+import { ToastContainer } from 'react-toastify';
 import { fetchContacts } from 'redux/operations';
 import { ContactForm, ContactList, Filter } from 'components';
 import { selectContacts } from 'redux/selectors';
 
+import 'react-toastify/dist/ReactToastify.css';
 import css from 'components/App/App.module.css';
 
 export const App = () => {
@@ -27,6 +29,7 @@ export const App = () => {
           <ContactList />
         </>
       )}
+      <ToastContainer autoClose={2000} />
     </div>
   );
 };

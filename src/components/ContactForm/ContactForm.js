@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import { addContact } from 'redux/operations';
 import { selectContacts, selectError } from 'redux/selectors';
 
@@ -22,11 +23,11 @@ export const ContactForm = () => {
     const isNumber = contacts.find(contact => contact.phone === phone);
 
     if (isContact) {
-      alert(`${name} is already in contacts`);
+      toast.info(`${name} is already in contacts`);
       form.reset();
       return;
     } else if (isNumber) {
-      alert(`Number ${phone} is already in contacts`);
+      toast.info(`Number ${phone} is already in contacts`);
       form.reset();
       return;
     } else {
